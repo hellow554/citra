@@ -80,12 +80,13 @@ std::vector<std::pair<QString, QString>> GetPresetValues(const VideoDumper::Opti
     case AV_OPT_TYPE_UINT64: {
         std::vector<std::pair<QString, QString>> out;
         // Add in all named constants
-        for (const auto& constant : option.named_constants) {
-            out.emplace_back(QObject::tr("%1 (0x%2)")
-                                 .arg(QString::fromStdString(constant.name))
-                                 .arg(constant.value, 0, 16),
-                             QString::fromStdString(constant.name));
-        }
+        std::transform(option.named_constants.begin(), option.named_constants.end(),
+                       std::inserter(out, out.end()), [](auto& constant) {
+                           return QObject::tr("%1 (0x%2)")
+                                      .arg(QString::fromStdString(constant.name))
+                                      .arg(constant.value, 0, 16),
+                                  QString::fromStdString(constant.name);
+                       });
         return out;
     }
     default:
@@ -135,11 +136,14 @@ void OptionSetDialog::InitializeUI(const std::string& initial_value) {
             // Get the name of the initial value
             try {
                 s64 initial_value_integer = std::stoll(initial_value, nullptr, 0);
-                for (const auto& constant : option.named_constants) {
-                    if (constant.value == initial_value_integer) {
-                        real_initial_value = QString::fromStdString(constant.name);
-                        break;
-                    }
+                if (const auto& constant =
+                        std::find_if(option.named_constants.begin(), option.named_constants.end(),
+                                     [initial_value_integer](const auto& constant) {
+                                         return constant.value == initial_value_integer;
+                                     });
+                    constant != option.named_constants.end()) {
+
+                    real_initial_value = QString::fromStdString(constant.name);
                 }
             } catch (...) {
                 // Not convertible to integer, ignore
@@ -238,12 +242,15 @@ void OptionSetDialog::UpdateUIDisplay() {
     }
 
     ui->lineEdit->setVisible(false);
-    for (const auto& constant : option.named_constants) {
-        if (constant.name == ui->comboBox->currentData().toString().toStdString()) {
-            ui->comboBoxHelpLabel->setVisible(true);
-            ui->comboBoxHelpLabel->setText(QString::fromStdString(constant.description));
-            return;
-        }
+
+    if (const auto& constant =
+            std::find_if(option.named_constants.begin(), option.named_constants.end(),
+                         [name = ui->comboBox->currentData().toString().toStdString()] {
+                             return constant.name == name;
+                         });
+        constant != option.named_constants.end()) {
+        ui->comboBoxHelpLabel->setVisible(true);
+        ui->comboBoxHelpLabel->setText(QString::fromStdString(constant.description));
     }
 }
 

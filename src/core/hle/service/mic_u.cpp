@@ -123,14 +123,13 @@ private:
 };
 
 struct MIC_U::Impl {
-    explicit Impl(Core::System& system) : timing(system.CoreTiming()) {
-        buffer_full_event =
-            system.Kernel().CreateEvent(Kernel::ResetType::OneShot, "MIC_U::buffer_full_event");
-        buffer_write_event =
-            timing.RegisterEvent("MIC_U::UpdateBuffer", [this](u64 userdata, s64 cycles_late) {
-                UpdateSharedMemBuffer(userdata, cycles_late);
-            });
-    }
+    explicit Impl(Core::System& system)
+        : timing(system.CoreTiming()), buffer_full_event(system.Kernel().CreateEvent(
+                                           Kernel::ResetType::OneShot, "MIC_U::buffer_full_event")),
+          buffer_write_event(
+              timing.RegisterEvent("MIC_U::UpdateBuffer", [this](u64 userdata, s64 cycles_late) {
+                  UpdateSharedMemBuffer(userdata, cycles_late);
+              })) {}
 
     void MapSharedMem(Kernel::HLERequestContext& ctx) {
         IPC::RequestParser rp{ctx, 0x01, 1, 2};
@@ -379,6 +378,7 @@ struct MIC_U::Impl {
         change_mic_impl_requested.store(false);
     }
 
+    Core::Timing& timing;
     std::atomic<bool> change_mic_impl_requested = false;
     std::shared_ptr<Kernel::Event> buffer_full_event;
     Core::TimingEventType* buffer_write_event = nullptr;
@@ -387,7 +387,6 @@ struct MIC_U::Impl {
     bool allow_shell_closed = false;
     bool clamp = false;
     std::unique_ptr<Frontend::Mic::Interface> mic;
-    Core::Timing& timing;
     State state{};
     Encoding encoding{};
 

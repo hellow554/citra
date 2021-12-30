@@ -36,7 +36,7 @@ PathParser::PathParser(const Path& path) {
 
     auto begin = path_sequence.begin();
     auto end = path_sequence.end();
-    end = std::remove_if(begin, end, [](std::string& str) { return str == "" || str == "."; });
+    end = std::remove_if(begin, end, [](const std::string& str) { return str == "" || str == "."; });
     path_sequence = std::vector<std::string>(begin, end);
 
     // checks if the path is out of bounds.

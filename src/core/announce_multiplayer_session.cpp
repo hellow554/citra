@@ -20,14 +20,16 @@ namespace Core {
 // Time between room is announced to web_service
 static constexpr std::chrono::seconds announce_time_interval(15);
 
-AnnounceMultiplayerSession::AnnounceMultiplayerSession() {
+AnnounceMultiplayerSession::AnnounceMultiplayerSession()
+    : backend(
 #ifdef ENABLE_WEB_SERVICE
-    backend = std::make_unique<WebService::RoomJson>(Settings::values.web_api_url,
-                                                     Settings::values.citra_username,
-                                                     Settings::values.citra_token);
+          std::make_unique<WebService::RoomJson>(Settings::values.web_api_url,
+                                                 Settings::values.citra_username,
+                                                 Settings::values.citra_token)
 #else
-    backend = std::make_unique<AnnounceMultiplayerRoom::NullBackend>();
+          std::make_unique<AnnounceMultiplayerRoom::NullBackend>()
 #endif
+      ) {
 }
 
 Common::WebResult AnnounceMultiplayerSession::Register() {

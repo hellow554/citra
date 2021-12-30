@@ -294,10 +294,13 @@ void MemorySystem::UnregisterPageTable(std::shared_ptr<PageTable> page_table) {
  * This function should only be called for virtual addreses with attribute `PageType::Special`.
  */
 static MMIORegionPointer GetMMIOHandler(const PageTable& page_table, VAddr vaddr) {
-    for (const auto& region : page_table.special_regions) {
-        if (vaddr >= region.base && vaddr < (region.base + region.size)) {
-            return region.handler;
-        }
+    if (const auto& region =
+            std::find_if(page_table.special_regions.begin(), page_table.special_regions.end(),
+                         [&vaddr](const auto& region) {
+                             return vaddr >= region.base && vaddr < (region.base + region.size);
+                         });
+        LIKELY(region != page_table.special_regions.end())) {
+        return region->handler;
     }
     ASSERT_MSG(false, "Mapped IO page without a handler @ {:08X}", vaddr);
     return nullptr; // Should never happen

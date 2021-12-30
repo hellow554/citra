@@ -601,7 +601,6 @@ private:
                           (int)instr.opcode.Value().EffectiveOpCode(),
                           instr.opcode.Value().GetInfo().name, instr.hex);
                 throw DecompileFail("Unhandled instruction");
-                break;
             }
             }
 
@@ -791,7 +790,6 @@ private:
                           (int)instr.opcode.Value().EffectiveOpCode(),
                           instr.opcode.Value().GetInfo().name, instr.hex);
                 throw DecompileFail("Unhandled instruction");
-                break;
             }
             }
 

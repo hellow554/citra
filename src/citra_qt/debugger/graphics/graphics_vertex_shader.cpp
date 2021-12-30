@@ -326,9 +326,12 @@ QVariant GraphicsVertexShaderModel::data(const QModelIndex& index, int role) con
         }
 
         // Use a grey background for instructions which have no debug data associated to them
-        for (const auto& record : par->debug_data.records)
-            if (index.row() == static_cast<int>(record.instruction_offset))
-                return QVariant();
+        if (std::any_of(par->debug_data.records.begin(), par->debug_data.records.end(),
+                        [&index](const auto& record) {
+                            return index.row() == static_cast<int>(record.instruction_offset);
+                        })) {
+            return QVariant();
+        }
 
         return QBrush(QColor(192, 192, 192));
     }

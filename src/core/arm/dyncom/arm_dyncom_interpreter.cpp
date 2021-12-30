@@ -896,7 +896,7 @@ static int InterpreterTranslateSingle(ARMul_State* cpu, std::size_t& bb_start, u
 static int clz(unsigned int x) {
     int n;
     if (x == 0)
-        return (32);
+        return 32;
     n = 1;
     if ((x >> 16) == 0) {
         n = n + 16;

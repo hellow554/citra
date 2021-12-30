@@ -959,7 +959,7 @@ static Surface FindMatch(const SurfaceCache& surface_cache, const SurfaceParams&
                                                : (params.res_scale <= surface->res_scale);
             // validity will be checked in GetCopyableInterval
             bool is_valid =
-                find_flags & MatchFlags::Copy
+                (find_flags & MatchFlags::Copy)
                     ? true
                     : surface->IsRegionValid(validate_interval.value_or(params.GetInterval()));
 
@@ -1687,11 +1687,12 @@ bool RasterizerCacheOpenGL::IntervalHasInvalidPixelFormat(SurfaceParams& params,
                                                           const SurfaceInterval& interval) {
     params.pixel_format = PixelFormat::Invalid;
     for (const auto& set : RangeFromInterval(surface_cache, interval))
-        for (const auto& surface : set.second)
-            if (surface->pixel_format == PixelFormat::Invalid) {
-                LOG_WARNING(Render_OpenGL, "Surface found with invalid pixel format");
-                return true;
-            }
+        if (std::any_of(set.second.begin(), set.second.end(), [](const auto& surface) {
+                return surface->pixel_format == PixelFormat::Invalid;
+            })) {
+            LOG_WARNING(Render_OpenGL, "Surface found with invalid pixel format");
+            return true;
+        }
     return false;
 }
 

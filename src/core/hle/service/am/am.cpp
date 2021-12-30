@@ -223,12 +223,11 @@ ResultVal<std::size_t> CIAFile::Write(u64 offset, std::size_t length, bool flush
             container.LoadHeader(data);
             container.Print();
             install_state = CIAInstallState::HeaderLoaded;
+        } else {
+            // we don't have a header yet, we can't pull offsets of other sections
+            return MakeResult<std::size_t>(length);
         }
     }
-
-    // If we don't have a header yet, we can't pull offsets of other sections
-    if (install_state == CIAInstallState::InstallStarted)
-        return MakeResult<std::size_t>(length);
 
     // If we have been given data before (or including) .app content, pull it into
     // our buffer, but only pull *up to* the content offset, no further.

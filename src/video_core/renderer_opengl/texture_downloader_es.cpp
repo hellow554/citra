@@ -230,11 +230,11 @@ void TextureDownloaderES::GetTexImage(GLenum target, GLuint level, GLenum format
     switch (format) {
     case GL_DEPTH_COMPONENT:
     case GL_DEPTH_STENCIL:
-        // unfortunately, the accurate way is too slow for release
         return;
-        state.draw.read_framebuffer = ConvertDepthToColor(level, format, type, height, width);
-        state.Apply();
-        break;
+        // unfortunately, the accurate way is too slow for release
+        // state.draw.read_framebuffer = ConvertDepthToColor(level, format, type, height, width);
+        // state.Apply();
+        // break;
     default:
         state.draw.read_framebuffer = read_fbo_generic.handle;
         state.Apply();

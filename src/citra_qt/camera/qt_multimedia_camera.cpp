@@ -12,8 +12,8 @@
 
 namespace Camera {
 
-QList<QVideoFrame::PixelFormat> QtCameraSurface::supportedPixelFormats([
-    [maybe_unused]] QAbstractVideoBuffer::HandleType handleType) const {
+QList<QVideoFrame::PixelFormat> QtCameraSurface::supportedPixelFormats(
+    [[maybe_unused]] QAbstractVideoBuffer::HandleType handleType) const {
     return QList<QVideoFrame::PixelFormat>()
            << QVideoFrame::Format_ARGB32 << QVideoFrame::Format_ARGB32_Premultiplied
            << QVideoFrame::Format_RGB32 << QVideoFrame::Format_RGB24 << QVideoFrame::Format_RGB565
@@ -120,9 +120,8 @@ std::unordered_map<std::string, std::shared_ptr<QtMultimediaCameraHandler>>
     QtMultimediaCameraHandler::loaded;
 
 void QtMultimediaCameraHandler::Init() {
-    for (auto& handler : handlers) {
-        handler = std::make_shared<QtMultimediaCameraHandler>();
-    }
+    std::generate(handlers.begin(), handlers.end(),
+                  [] { return std::make_shared<QtMultimediaCameraHandler>(); });
 }
 
 std::shared_ptr<QtMultimediaCameraHandler> QtMultimediaCameraHandler::GetHandler(

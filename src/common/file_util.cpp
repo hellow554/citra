@@ -473,7 +473,6 @@ u64 ScanDirectoryTree(const std::string& directory, FSTEntry& parent_entry,
 }
 
 void GetAllFilesFromNestedEntries(FSTEntry& directory, std::vector<FSTEntry>& output) {
-    std::vector<FSTEntry> files;
     for (auto& entry : directory.children) {
         if (entry.isDirectory) {
             GetAllFilesFromNestedEntries(entry, output);

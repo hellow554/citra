@@ -13,7 +13,7 @@
 namespace Service::SM {
 
 static ResultCode ValidateServiceName(const std::string& name) {
-    if (name.size() <= 0 || name.size() > 8) {
+    if (name.size() == 0 || name.size() > 8) {
         return ERR_INVALID_NAME_SIZE;
     }
     if (name.find('\0') != std::string::npos) {

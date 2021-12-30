@@ -88,7 +88,7 @@ void SRV::EnableNotification(Kernel::HLERequestContext& ctx) {
 class SRV::ThreadCallback : public Kernel::HLERequestContext::WakeupCallback {
 
 public:
-    explicit ThreadCallback(Core::System& system_, std::string name_)
+    explicit ThreadCallback(Core::System& system_, const std::string &name_)
         : system(system_), name(name_) {}
 
     void WakeUp(std::shared_ptr<Kernel::Thread> thread, Kernel::HLERequestContext& ctx,

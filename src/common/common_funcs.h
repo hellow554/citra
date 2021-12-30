@@ -21,6 +21,22 @@
 #define INSERT_PADDING_BYTES(num_bytes) u8 CONCAT2(pad, __LINE__)[(num_bytes)]
 #define INSERT_PADDING_WORDS(num_words) u32 CONCAT2(pad, __LINE__)[(num_words)]
 
+// #include "config.h"
+#ifdef __GNUC__
+#define HAVE_BUILTIN_EXPECT 1
+#endif
+#ifdef COMMON_BIG_ENDIAN
+#define WORDS_BIGENDIAN 1
+#endif
+
+#if !defined(LIKELY)
+#if HAVE_BUILTIN_EXPECT
+#define LIKELY(x) (__builtin_expect(!!(x), 1))
+#else
+#define LIKELY(x) (x)
+#endif
+#endif
+
 // Inlining
 #ifdef _WIN32
 #define FORCE_INLINE __forceinline

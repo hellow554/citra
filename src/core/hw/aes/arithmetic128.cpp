@@ -25,10 +25,9 @@ AESKey Lrot128(const AESKey& in, u32 rot) {
 AESKey Add128(const AESKey& a, const AESKey& b) {
     AESKey out;
     u32 carry = 0;
-    u32 sum = 0;
 
     for (int i = 15; i >= 0; i--) {
-        sum = a[i] + b[i] + carry;
+        u32 sum = a[i] + b[i] + carry;
         carry = sum >> 8;
         out[i] = static_cast<u8>(sum & 0xff);
     }
@@ -39,10 +38,9 @@ AESKey Add128(const AESKey& a, const AESKey& b) {
 AESKey Add128(const AESKey& a, u64 b) {
     AESKey out = a;
     u32 carry = 0;
-    u32 sum = 0;
 
     for (int i = 15; i >= 8; i--) {
-        sum = a[i] + static_cast<u8>((b >> ((15 - i) * 8)) & 0xff) + carry;
+        u32 sum = a[i] + static_cast<u8>((b >> ((15 - i) * 8)) & 0xff) + carry;
         carry = sum >> 8;
         out[i] = static_cast<u8>(sum & 0xff);
     }

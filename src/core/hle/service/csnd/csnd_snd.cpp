@@ -365,7 +365,6 @@ void CSND_SND::ExecuteCommands(Kernel::HLERequestContext& ctx) {
                     continue;
                 ChannelState state;
                 state.active = false;
-                state.adpcm_predictor = channels[i].block1_adpcm_state.predictor;
                 state.adpcm_predictor = channels[i].block1_adpcm_state.step_index;
                 state.zero = 0;
                 std::memcpy(

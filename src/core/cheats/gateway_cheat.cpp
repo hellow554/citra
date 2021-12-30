@@ -6,6 +6,7 @@
 #include <cmath>
 #include <fstream>
 #include <functional>
+#include <numeric>
 #include <string>
 #include <vector>
 #include "common/file_util.h"
@@ -446,10 +447,9 @@ std::string GatewayCheat::GetType() const {
 }
 
 std::string GatewayCheat::GetCode() const {
-    std::string result;
-    for (const auto& line : cheat_lines)
-        result += line.cheat_line + '\n';
-    return result;
+    return std::accumulate(
+        cheat_lines.begin(), cheat_lines.end(), std::string(),
+        [](auto& result, const auto& line) { return result += line.cheat_line + '\n'; });
 }
 
 /// A special marker used to keep track of enabled cheats

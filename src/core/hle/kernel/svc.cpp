@@ -1607,8 +1607,8 @@ void SVC::CallSVC(u32 immediate) {
                      "Running threads from exiting processes is unimplemented");
 
     const FunctionDef* info = GetSVCInfo(immediate);
-    LOG_TRACE(Kernel_SVC, "calling {}", info->name);
     if (info) {
+        LOG_TRACE(Kernel_SVC, "calling {}", info->name);
         if (info->func) {
             (this->*(info->func))();
         } else {

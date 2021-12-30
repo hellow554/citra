@@ -430,11 +430,9 @@ StereoFrame16 DspHle::Impl::GenerateCurrentFrame() {
 }
 
 bool DspHle::Impl::Tick() {
-    StereoFrame16 current_frame = {};
-
     // TODO: Check dsp::DSP semaphore (which indicates emulated application has finished writing to
     // shared memory region)
-    current_frame = GenerateCurrentFrame();
+    StereoFrame16 current_frame = GenerateCurrentFrame();
 
     parent.OutputFrame(std::move(current_frame));
 

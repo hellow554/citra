@@ -10,6 +10,7 @@
 #include <cryptopp/modes.h>
 #include <cryptopp/sha.h>
 #include <fmt/format.h>
+#include "common/common_funcs.h"
 #include "common/common_paths.h"
 #include "common/file_util.h"
 #include "common/logging/log.h"
@@ -357,12 +358,12 @@ void LoadNativeFirmKeysNew3DS() {
 
     u32 arm9_offset(0);
     u32 arm9_size(0);
-    for (auto section_header : header.section_headers) {
-        if (section_header.firmware_type == FirmwareType::ARM9) {
-            arm9_offset = section_header.offset;
-            arm9_size = section_header.size;
-            break;
-        }
+    if (auto section_header =
+            std::find_if(header.section_headers.begin(), header.section_headers.end(),
+                         [](auto& sh) { return sh.firmware_type == FirmwareType::ARM9; });
+        section_header != header.section_headers.end()) {
+        arm9_offset = section_header->offset;
+        arm9_size = section_header->size;
     }
 
     if (arm9_offset != 0x66800) {
@@ -454,7 +455,7 @@ void LoadPresetKeys() {
         }
 
         std::size_t common_key_index;
-        if (std::sscanf(name.c_str(), "common%zd", &common_key_index) == 1) {
+        if (std::sscanf(name.c_str(), "common%zu", &common_key_index) == 1) {
             if (common_key_index >= common_key_y_slots.size()) {
                 LOG_ERROR(HW_AES, "Invalid common key index {}", common_key_index);
             } else {

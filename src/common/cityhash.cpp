@@ -30,15 +30,8 @@
 #include <algorithm>
 #include <string.h> // for memcpy and memset
 #include "cityhash.h"
+#include "common/common_funcs.h"
 #include "common/swap.h"
-
-// #include "config.h"
-#ifdef __GNUC__
-#define HAVE_BUILTIN_EXPECT 1
-#endif
-#ifdef COMMON_BIG_ENDIAN
-#define WORDS_BIGENDIAN 1
-#endif
 
 using namespace std;
 
@@ -66,14 +59,6 @@ static uint32 UNALIGNED_LOAD32(const char* p) {
 #else
 #define uint32_in_expected_order(x) (x)
 #define uint64_in_expected_order(x) (x)
-#endif
-
-#if !defined(LIKELY)
-#if HAVE_BUILTIN_EXPECT
-#define LIKELY(x) (__builtin_expect(!!(x), 1))
-#else
-#define LIKELY(x) (x)
-#endif
 #endif
 
 static uint64 Fetch64(const char* p) {

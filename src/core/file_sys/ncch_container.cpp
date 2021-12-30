@@ -771,12 +771,12 @@ Loader::ResultStatus NCCHContainer::ReadExtdataId(u64& extdata_id) {
             exheader_header.arm11_system_local_caps.storage_info.extdata_id4.Value(),
             exheader_header.arm11_system_local_caps.storage_info.extdata_id5.Value(),
         }};
-        for (u64 id : extdata_ids) {
-            if (id) {
-                // Found a non-zero ID, use it
-                extdata_id = id;
-                return Loader::ResultStatus::Success;
-            }
+
+        if (auto id = std::find_if(extdata_ids.begin(), extdata_ids.end(),
+                                   [](u64 id) { return id != 0; });
+            id != extdata_ids.end()) {
+            extdata_id = *id;
+            return Loader::ResultStatus::Success;
         }
 
         return Loader::ResultStatus::ErrorNotUsed;

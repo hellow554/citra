@@ -149,7 +149,7 @@ static void InitializeLogging() {
 }
 
 GMainWindow::GMainWindow()
-    : config(std::make_unique<Config>()), emu_thread(nullptr),
+    : emu_thread(nullptr), config(std::make_unique<Config>()),
       ui(std::make_unique<Ui::MainWindow>()) {
     InitializeLogging();
     Debugger::ToggleConsole();
@@ -1476,7 +1476,7 @@ void GMainWindow::InstallCIA(QStringList filepaths) {
         const auto cia_progress = [&](std::size_t written, std::size_t total) {
             emit UpdateProgress(written, total);
         };
-        for (const auto current_path : filepaths) {
+        for (const auto &current_path : filepaths) {
             status = Service::AM::InstallCIA(current_path.toStdString(), cia_progress);
             emit CIAInstallReport(status, current_path);
         }

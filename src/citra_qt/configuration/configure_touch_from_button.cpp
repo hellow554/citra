@@ -440,31 +440,28 @@ int TouchScreenPreview::AddDot(const int device_x, const int device_y) {
 }
 
 void TouchScreenPreview::RemoveDot(const int id) {
-    for (auto dot_it = dots.begin(); dot_it != dots.end(); ++dot_it) {
-        if (dot_it->first == id) {
-            dot_it->second->deleteLater();
-            dots.erase(dot_it);
-            return;
-        }
+    if (auto dot_it = std::find_if(dots.begin(), dots.end(),
+                                   [id](const auto& dot) { return dot.first == id; });
+        dot_it != dots.end()) {
+        dot_it->second->deleteLater();
+        dots.erase(dot_it);
     }
 }
 
 void TouchScreenPreview::HighlightDot(const int id, const bool active) const {
-    for (const auto& dot : dots) {
-        if (dot.first == id) {
-            // use color property from the stylesheet, or fall back to the default palette
-            if (dot_highlight_color.isValid()) {
-                dot.second->setStyleSheet(
-                    active ? QStringLiteral("color: %1").arg(dot_highlight_color.name())
-                           : QString{});
-            } else {
-                dot.second->setForegroundRole(active ? QPalette::ColorRole::LinkVisited
-                                                     : QPalette::ColorRole::NoRole);
-            }
-            if (active) {
-                dot.second->raise();
-            }
-            return;
+    if (auto dot = std::find_if(dots.begin(), dots.end(),
+                                [id](const auto& dot) { return dot.first == id; });
+        dot != dots.end()) {
+        // use color property from the stylesheet, or fall back to the default palette
+        if (dot_highlight_color.isValid()) {
+            dot->second->setStyleSheet(
+                active ? QStringLiteral("color: %1").arg(dot_highlight_color.name()) : QString{});
+        } else {
+            dot->second->setForegroundRole(active ? QPalette::ColorRole::LinkVisited
+                                                  : QPalette::ColorRole::NoRole);
+        }
+        if (active) {
+            dot->second->raise();
         }
     }
 }
